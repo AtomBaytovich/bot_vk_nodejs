@@ -80,6 +80,55 @@ const confirmFormKeyboard = Keyboard.builder()
     })
 
 
+const menuKeyboard = Keyboard.builder()
+    .textButton({
+        label: '1',
+        color: Keyboard.POSITIVE_COLOR
+    })
+    .textButton({
+        label: '2',
+        color: Keyboard.SECONDARY_COLOR
+    })
+    .textButton({
+        label: '3',
+        color: Keyboard.SECONDARY_COLOR
+    })
+    .textButton({
+        label: '✈ 4',
+        color: Keyboard.SECONDARY_COLOR
+    })
+
+
+const menuSearchUserKeyboard = Keyboard.builder()
+    .textButton({
+        label: '❤',
+        payload: {
+            command: 'like'
+        },
+        color: Keyboard.POSITIVE_COLOR
+    })
+    .textButton({
+        label: '💌',
+        payload: {
+            command: 'message'
+        },
+        color: Keyboard.SECONDARY_COLOR
+    })
+    .textButton({
+        label: '👎',
+        payload: {
+            command: 'unlike'
+        },
+        color: Keyboard.SECONDARY_COLOR
+    })
+    .textButton({
+        label: '💤',
+        payload: {
+            command: 'sleep'
+        },
+        color: Keyboard.SECONDARY_COLOR
+    })
+
 module.exports = {
     genderKeyboard,
     interestingGenderKeyboard,
@@ -87,5 +136,7 @@ module.exports = {
     noTextKeyboard,
     noKeyboard,
     myPhotoKeyboard,
-    confirmFormKeyboard
+    confirmFormKeyboard,
+    menuKeyboard,
+    menuSearchUserKeyboard
 }

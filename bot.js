@@ -3,6 +3,8 @@ const { HearManager } = require("@vk-io/hear");
 const { checkUserBd } = require("./middleware/checkUser");
 const { SessionManager } = require("@vk-io/session");
 const sceneManager = require("./controllers/scenes");
+const { menuCommands } = require("./controllers/commands");
+const { menuKeyboard } = require("./utils/buttons");
 
 const vk = _VK;
 const { updates } = vk;
@@ -28,10 +30,16 @@ updates.on('message_new', hearManager.middleware);
 
 
 hearManager.hear('Старт', async (context) => {
-    console.log('Я помню тебя!')
-    console.log(context.user)
     context.reply('Я помню тебя!')
 });
 
+hearManager.hear('1', menuCommands.seeTmp)
+
+
+hearManager.onFallback(async (context) => {
+    return await context.reply('Ой... Нет такой команды', {
+        keyboard: menuKeyboard
+    })
+});
 
 module.exports = vk;

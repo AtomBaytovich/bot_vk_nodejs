@@ -35,7 +35,16 @@ const schema = new Schema({
         type: String,
         max: 1000,
         default: ''
-    }
+    },
+    isSearch: {
+        type: Boolean
+    },
+    listOfLikes: [{
+        id: {
+            type: Number,
+            required: true
+        }
+    }]
 })
 
 const User = model('User', schema);

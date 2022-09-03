@@ -33,6 +33,16 @@ class UserController {
         return await User.findOne({ id }).lean();
     }
 
+    async getRandomUser({ years, city, gender }) {
+
+        return {
+            name: 'Glorius',
+            age: 17,
+            city: 'Москва'
+        }
+        
+    }
+
 }
 
 module.exports = new UserController();
