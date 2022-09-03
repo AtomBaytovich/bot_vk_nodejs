@@ -2,12 +2,35 @@ const User = require("../models/user");
 
 class UserController {
 
-    create({ name }) {
-        console.log(name)
+    async create({
+        id,
+        age,
+        gender,
+        interestingGender,
+        city,
+        name,
+        desc,
+        photos
+    }) {
+        const newUser = new User({
+            id,
+            age,
+            gender,
+            interestingGender,
+            city,
+            name,
+            desc,
+            photos
+        })
+        console.log(newUser)
+        await newUser.save(err => {
+            if (err) console.log(err)
+        });
+        return newUser;
     }
 
     async get({ id }) {
-        await User.findOne({ id }).lean();
+        return await User.findOne({ id }).lean();
     }
 
 }

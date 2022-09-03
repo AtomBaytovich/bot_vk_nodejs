@@ -1,4 +1,4 @@
-const { _VK } = require("./instance");
+const { _VK, _API_VK } = require("./instance");
 const { HearManager } = require("@vk-io/hear");
 const { checkUserBd } = require("./middleware/checkUser");
 const { SessionManager } = require("@vk-io/session");
@@ -11,7 +11,7 @@ const hearManager = new HearManager();
 const sessionManager = new SessionManager();
 
 
-updates.on('message', (context, next) => {
+updates.on('message', async (context, next) => {
     // если сообщение исходящее и не из беседы, то не отвечаем
     if (context.isOutbox || context.isChat) return;
     return next();
@@ -27,8 +27,10 @@ updates.on('message_new', checkUserBd)
 updates.on('message_new', hearManager.middleware);
 
 
-hearManager.hear(/^Начать || Старт || Запуск$/i, async (context) => {
-    return context.scene.enter('signup');
+hearManager.hear('Старт', async (context) => {
+    console.log('Я помню тебя!')
+    console.log(context.user)
+    context.reply('Я помню тебя!')
 });
 
 

@@ -23,7 +23,7 @@
     "chalk": "^5.0.1",
     "dotenv": "^16.0.2",
     "mongoose": "^6.5.4",
-    "vk-io": "^4.6.0"
+    "vk-io": "^4.3.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.19"

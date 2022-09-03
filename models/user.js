@@ -11,7 +11,7 @@ const schema = new Schema({
         required: true,
     },
     photos: [],
-    years: {
+    age: {
         type: Number,
         required: true,
         min: 5,

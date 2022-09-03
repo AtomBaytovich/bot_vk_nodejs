@@ -63,11 +63,29 @@ const myPhotoKeyboard = Keyboard.builder()
         color: Keyboard.SECONDARY_COLOR
     })
 
+const confirmFormKeyboard = Keyboard.builder()
+    .textButton({
+        label: 'Да',
+        payload: {
+            command: 'yes'
+        },
+        color: Keyboard.POSITIVE_COLOR
+    })
+    .textButton({
+        label: 'Заполнить заново',
+        payload: {
+            command: 'no'
+        },
+        color: Keyboard.SECONDARY_COLOR
+    })
+
+
 module.exports = {
     genderKeyboard,
     interestingGenderKeyboard,
     locationKeyboard,
     noTextKeyboard,
     noKeyboard,
-    myPhotoKeyboard
+    myPhotoKeyboard,
+    confirmFormKeyboard
 }

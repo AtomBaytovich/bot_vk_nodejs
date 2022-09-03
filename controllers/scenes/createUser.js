@@ -5,15 +5,14 @@ const {
     locationKeyboard,
     noTextKeyboard,
     noKeyboard,
-    myPhotoKeyboard
+    myPhotoKeyboard,
+    confirmFormKeyboard
 } = require("../../utils/buttons");
+
+const userManagers = require("../userManagers");
 
 const stepOne = (context) => {
     if (context.scene.step.firstTime || !context.text) {
-        context.send(`🥰 Привет! Я бот НеДамВинчик \nМеня создал в учебных целях https://t.me/atom_baytovich`);
-        context.send({
-            sticker_id: 72805
-        });
         return context.send(`Сколько тебе лет?`, {
             keyboard: noKeyboard
         })
@@ -36,7 +35,7 @@ const stepTwo = (context) => {
     return context.scene.step.next();
 }
 
-const stepThree = async (context) => {
+const stepThree = (context) => {
     if (context.scene.step.firstTime || !context.text) {
         return context.send('Кто тебе интересен?', {
             keyboard: interestingGenderKeyboard
@@ -47,7 +46,7 @@ const stepThree = async (context) => {
     return context.scene.step.next();
 }
 
-const stepFour = async (context) => {
+const stepFour = (context) => {
     if (context.scene.step.firstTime) {
         return context.send('Из какого ты города?', {
             keyboard: locationKeyboard
@@ -58,7 +57,7 @@ const stepFour = async (context) => {
     return context.scene.step.next();
 }
 
-const stepFive = async (context) => {
+const stepFive = (context) => {
     if (context.scene.step.firstTime || !context.text) {
         return context.send('Как мне тебя называть?', {
             keyboard: noKeyboard
@@ -68,7 +67,7 @@ const stepFive = async (context) => {
     return context.scene.step.next();
 }
 
-const stepSix = async (context) => {
+const stepSix = (context) => {
     if (context.scene.step.firstTime || !context.text) {
         return context.send('Расскажи о себе и кого хочешь найти, чем предлагаешь заняться. Это поможет лучше подобрать тебе компанию.', {
             keyboard: noTextKeyboard
@@ -109,32 +108,81 @@ const stepSeven = async (context) => {
 }
 
 
-const stepEnd = async (context) => {
-    if (context.scene.step.firstTime || !context.text) {
-        console.log(context.scene.state)
+const stepFinish = async (context) => {
+    try {
+        if (context.scene.step.firstTime || !context.text) {
+            console.log(context.scene.state)
 
-        const {
-            age,
-            gender,
-            interestingGender,
-            city,
-            name,
-            desc,
-            photos
-        } = context.scene.state;
+            const {
+                age,
+                city,
+                name,
+                desc,
+                photos
+            } = context.scene.state;
+            // переделать отправку сообщение о подтвреждении записи
+            const attachment = await _VK.upload.messagePhoto({
+                source: {
+                    value: photos[0]
+                }
+            });
 
-        const attachment = await _VK.upload.messagePhoto({
-            source: {
-                value: photos[0]
-            }
-        });
+            await context.send({
+                message: `Вот твоя анкета: \n\n${name}, ${age}, ${city}\n${desc}`,
+                attachment
+            });
+            return context.send('Всё верно?', {
+                keyboard: confirmFormKeyboard
+            })
+        }
 
-        return context.send({ attachment, message: 'Картинка' });
+        return context.scene.step.next();
+    } catch (error) {
+        console.log(error)
+        context.reply('Ой.. Я сломался... Произошла какая - то ошибка!')
     }
-
-    return context.scene.step.next();
 }
 
-const createUserScene = [stepOne, stepTwo, stepThree, stepFour, stepFive, stepSix, stepSeven, stepEnd]
+const stepEnd = async (context) => {
+    try {
+        if (!context.messagePayload) {
+            return context.reply('Используй клавиатуру!')
+        }
+
+        if (context.messagePayload.command == 'yes') {
+            const {
+                age,
+                gender,
+                interestingGender,
+                city,
+                name,
+                desc,
+                photos
+            } = context.scene.state;
+
+            await userManagers.create({
+                id: context.peerId,
+                age,
+                gender,
+                interestingGender,
+                city,
+                name,
+                desc,
+                photos
+            })
+            await context.send('Добро пожаловать!')
+            return context.scene.step.next();
+        }
+
+        await context.scene.leave()
+        return context.scene.enter('signup');
+
+    } catch (error) {
+        console.log(error)
+        context.reply('Ой.. Я сломался... Произошла какая - то ошибка!')
+    }
+}
+
+const createUserScene = [stepOne, stepTwo, stepThree, stepFour, stepFive, stepSix, stepSeven, stepFinish, stepEnd]
 
 module.exports = createUserScene;
