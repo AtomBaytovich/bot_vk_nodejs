@@ -1,0 +1,31 @@
+{
+  "name": "bot-vk-nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AtomBaytovich/bot_vk_nodejs.git"
+  },
+  "author": "Atom Baytovich",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AtomBaytovich/bot_vk_nodejs/issues"
+  },
+  "homepage": "https://github.com/AtomBaytovich/bot_vk_nodejs#readme",
+  "dependencies": {
+    "@vk-io/hear": "^1.1.0",
+    "@vk-io/scenes": "^1.2.0",
+    "@vk-io/session": "^2.1.0",
+    "chalk": "^5.0.1",
+    "dotenv": "^16.0.2",
+    "mongoose": "^6.5.4",
+    "vk-io": "^4.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  }
+}
