@@ -171,7 +171,8 @@ const stepEnd = async (context) => {
                 photos
             })
             await context.send('Добро пожаловать!')
-            return context.scene.step.next();
+            await context.scene.leave();
+            return context.scene.enter('searchUser');
         }
 
         await context.scene.leave()

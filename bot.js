@@ -3,8 +3,8 @@ const { HearManager } = require("@vk-io/hear");
 const { checkUserBd } = require("./middleware/checkUser");
 const { SessionManager } = require("@vk-io/session");
 const sceneManager = require("./controllers/scenes");
-const { menuCommands } = require("./controllers/commands");
-const { menuKeyboard } = require("./utils/buttons");
+const { menuCommands, noFoundCommand } = require("./controllers/commands");
+
 
 const vk = _VK;
 const { updates } = vk;
@@ -34,12 +34,11 @@ hearManager.hear('Старт', async (context) => {
 });
 
 hearManager.hear('1', menuCommands.seeTmp)
+hearManager.hear('Вернуться к оценкам', menuCommands.seeTmp)
+hearManager.hear('2', menuCommands.myTmp)
+hearManager.hear('✈ 4', menuCommands.seeTG)
 
-
-hearManager.onFallback(async (context) => {
-    return await context.reply('Ой... Нет такой команды', {
-        keyboard: menuKeyboard
-    })
-});
+// команда не найдена
+hearManager.onFallback(noFoundCommand);
 
 module.exports = vk;

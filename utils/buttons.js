@@ -129,6 +129,40 @@ const menuSearchUserKeyboard = Keyboard.builder()
         color: Keyboard.SECONDARY_COLOR
     })
 
+const backScoreKeyboard = Keyboard.builder()
+    .textButton({
+        label: 'Вернуться к оценкам',
+        payload: {
+        },
+        color: Keyboard.SECONDARY_COLOR
+    })
+
+const myTmpKeyboard = Keyboard.builder()
+    .textButton({
+        label: '1',
+        color: Keyboard.NEGATIVE_COLOR
+    })
+    .textButton({
+        label: '2',
+        color: Keyboard.SECONDARY_COLOR
+    })
+    .textButton({
+        label: '3',
+        color: Keyboard.SECONDARY_COLOR
+    })
+    .textButton({
+        label: '✈ 4',
+        color: Keyboard.SECONDARY_COLOR
+    })
+    .row()
+    .textButton({
+        label: 'Вернуться к оценкам',
+        payload: {
+        },
+        color: Keyboard.POSITIVE_COLOR
+    })
+
+
 module.exports = {
     genderKeyboard,
     interestingGenderKeyboard,
@@ -138,5 +172,7 @@ module.exports = {
     myPhotoKeyboard,
     confirmFormKeyboard,
     menuKeyboard,
-    menuSearchUserKeyboard
+    menuSearchUserKeyboard,
+    backScoreKeyboard,
+    myTmpKeyboard
 }

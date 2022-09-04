@@ -22,7 +22,7 @@ class UserController {
             desc,
             photos
         })
-        console.log(newUser)
+
         await newUser.save(err => {
             if (err) console.log(err)
         });
@@ -34,7 +34,10 @@ class UserController {
     }
 
     async getRandomUser({ years, city, gender }) {
+        const user = await User.findOne({
 
+        })
+        
         return {
             name: 'Glorius',
             age: 17,
