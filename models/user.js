@@ -37,7 +37,8 @@ const schema = new Schema({
         default: ''
     },
     isSearch: {
-        type: Boolean
+        type: Boolean,
+        default: true
     },
     listOfLikes: [{
         id: {

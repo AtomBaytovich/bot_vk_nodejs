@@ -3,7 +3,10 @@ const { HearManager } = require("@vk-io/hear");
 const { checkUserBd } = require("./middleware/checkUser");
 const { SessionManager } = require("@vk-io/session");
 const sceneManager = require("./controllers/scenes");
-const { menuCommands, noFoundCommand } = require("./controllers/commands");
+const {
+    menuCommands,
+    noFoundCommand,
+} = require("./controllers/commands");
 
 
 const vk = _VK;
@@ -19,9 +22,9 @@ updates.on('message', async (context, next) => {
     return next();
 });
 
-updates.on('message_new', sessionManager.middleware);
-updates.on('message_new', sceneManager.middleware);
-updates.on('message_new', sceneManager.middlewareIntercept); // Default scene entry handler
+updates.on(['message_new', 'message_event'], sessionManager.middleware);
+updates.on(['message_new', 'message_event'], sceneManager.middleware);
+updates.on(['message_new', 'message_event'], sceneManager.middlewareIntercept); // Default scene entry handler
 
 // проверяем есть ли запись юзера в бд
 updates.on('message_new', checkUserBd)
@@ -29,14 +32,24 @@ updates.on('message_new', checkUserBd)
 updates.on('message_new', hearManager.middleware);
 
 
+updates.on('message_event', async (context, next) => {
+    console.log(context)
+    if (context.eventPayload) {
+        await context.scene.enter('searchUser');
+        
+    }
+    next()
+})
+
+
 hearManager.hear('Старт', async (context) => {
-    context.reply('Я помню тебя!')
+    context.reply('Я помню тебя!',)
 });
 
-hearManager.hear('1', menuCommands.seeTmp)
-hearManager.hear('Вернуться к оценкам', menuCommands.seeTmp)
+hearManager.hear(['1', 'Вернуться к оценкам', 'Посмотреть анкеты', 'Смотреть анкеты'], menuCommands.seeTmp)
 hearManager.hear('2', menuCommands.myTmp)
-hearManager.hear('✈ 4', menuCommands.seeTG)
+hearManager.hear('3', menuCommands.noSeeTmp)
+hearManager.hear(['✈ 4', '4'], menuCommands.seeTG)
 
 // команда не найдена
 hearManager.onFallback(noFoundCommand);

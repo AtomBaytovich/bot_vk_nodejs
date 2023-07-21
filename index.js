@@ -9,7 +9,7 @@ const vk = require('./bot');
         await mongoose.connect(process.env.BD_TOKEN, {
             useUnifiedTopology: true,
             useNewUrlParser: true,
-            dbName: 'tgBot'
+            dbName: 'vkWine'
         });
 
         await vk.updates.start();

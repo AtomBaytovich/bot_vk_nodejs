@@ -1,20 +1,23 @@
 const { menuSearchUserKeyboard, menuKeyboard } = require("../../utils/buttons");
+const { menuText } = require("../../utils/text");
 const userManagers = require("../userManagers");
 
 const step = async (context) => {
     console.log('Вызов шага');
     if (context.scene.step.firstTime || !context.text) {
+        const user = await userManagers.get({ id: context.peerId });
+        if (!user) return;
         const {
             age,
             interestingGender,
             city
-        } = await userManagers.get({ id: context.senderId });
-        const user = await userManagers.getRandomUser({
+        } = user;
+        const userFindRandom = await userManagers.getRandomUser({
             years: age,
             gender: interestingGender,
             city
         });
-        return context.send(`${user.name}, ${user.age}, ${user.city}`, {
+        return context.send(`${userFindRandom.name}, ${userFindRandom.age}, ${userFindRandom.city}`, {
             keyboard: menuSearchUserKeyboard
         });
     }
@@ -37,11 +40,7 @@ const step = async (context) => {
         return context.send(`
 Подождем пока кто-то увидит твою анкету
 
-1. Смотреть анкеты.
-2. Моя анкета.
-3. Я больше не хочу никого искать.
-***
-4. ✈ Мой канал в Telegram.
+${menuText}
         `, {
             keyboard: menuKeyboard
         })

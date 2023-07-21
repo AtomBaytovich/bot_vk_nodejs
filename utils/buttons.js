@@ -163,6 +163,24 @@ const myTmpKeyboard = Keyboard.builder()
     })
 
 
+const oneOrTwoKeyboard = Keyboard.builder()
+    .textButton({
+        label: '1',
+        color: Keyboard.SECONDARY_COLOR
+    })
+    .textButton({
+        label: '2',
+        color: Keyboard.POSITIVE_COLOR
+    })
+
+const seeTmpKeyboard = Keyboard.builder()
+    .textButton({
+        label: 'Посмотреть анкеты',
+        color: Keyboard.POSITIVE_COLOR
+    })
+
+
+
 module.exports = {
     genderKeyboard,
     interestingGenderKeyboard,
@@ -174,5 +192,7 @@ module.exports = {
     menuKeyboard,
     menuSearchUserKeyboard,
     backScoreKeyboard,
-    myTmpKeyboard
+    myTmpKeyboard,
+    oneOrTwoKeyboard,
+    seeTmpKeyboard
 }

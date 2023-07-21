@@ -63,7 +63,9 @@ const stepFive = (context) => {
             keyboard: noKeyboard
         });
     }
-    context.scene.state.name = context.text;
+    const text = context.text;
+    if (text.length > 35) return context.reply('Что-то слишком большой текст... Давай до 35 символов. Хорошо?')
+    context.scene.state.name = text;
     return context.scene.step.next();
 }
 
