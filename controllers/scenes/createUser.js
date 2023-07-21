@@ -1,4 +1,5 @@
 const { _API_VK, _VK } = require("../../instance");
+const User = require("../../models/user");
 const {
     genderKeyboard,
     interestingGenderKeyboard,
@@ -8,8 +9,7 @@ const {
     myPhotoKeyboard,
     confirmFormKeyboard
 } = require("../../utils/buttons");
-
-const userManagers = require("../userManagers");
+const { keyboardText } = require("../../utils/text");
 
 const stepOne = (context) => {
     if (context.scene.step.firstTime || !context.text) {
@@ -30,7 +30,7 @@ const stepTwo = (context) => {
             keyboard: genderKeyboard
         });
     }
-    if (!context.messagePayload) return context.reply('Используй клавиатуру бота');
+    if (!context.messagePayload) return context.reply(keyboardText);
     context.scene.state.gender = context.messagePayload.type;
     return context.scene.step.next();
 }
@@ -41,7 +41,7 @@ const stepThree = (context) => {
             keyboard: interestingGenderKeyboard
         });
     }
-    if (!context.messagePayload) return context.reply('Используй клавиатуру бота');
+    if (!context.messagePayload) return context.reply(keyboardText);
     context.scene.state.interestingGender = context.messagePayload.type;
     return context.scene.step.next();
 }
@@ -52,8 +52,13 @@ const stepFour = (context) => {
             keyboard: locationKeyboard
         });
     }
+    console.log(context.geo)
     if (!context.geo) return context.reply('Используй клавиатуру бота! Мне важно знать в каком ты городе живёшь!');
-    context.scene.state.city = context.geo.place.city;
+    console.log(context.geo.place.city)
+    context.scene.state.geo = {};
+    context.scene.state.geo.city = context.geo.place.city;
+    context.scene.state.geo.latitude = context.geo.coordinates.latitude;
+    context.scene.state.geo.longitude = context.geo.coordinates.longitude;
     return context.scene.step.next();
 }
 
@@ -117,7 +122,7 @@ const stepFinish = async (context) => {
 
             const {
                 age,
-                city,
+                geo,
                 name,
                 desc,
                 photos
@@ -130,7 +135,7 @@ const stepFinish = async (context) => {
             });
 
             await context.send({
-                message: `Вот твоя анкета: \n\n${name}, ${age}, ${city}\n${desc}`,
+                message: `Вот твоя анкета: \n\n${name}, ${age}, ${geo.city}\n${desc}`,
                 attachment
             });
             return context.send('Всё верно?', {
@@ -156,22 +161,33 @@ const stepEnd = async (context) => {
                 age,
                 gender,
                 interestingGender,
-                city,
+                geo,
                 name,
                 desc,
                 photos
             } = context.scene.state;
 
-            await userManagers.create({
+            const newUser = new User({
                 id: context.peerId,
                 age,
                 gender,
                 interestingGender,
-                city,
+                geo: {
+                    city: geo.city,
+                    coord: {
+                        lat: geo.latitude,
+                        lon: geo.longitude
+                    }
+                },
                 name,
                 desc,
                 photos
             })
+
+            await newUser.save(err => {
+                if (err) console.log(err)
+            });
+
             await context.send('Добро пожаловать!')
             await context.scene.leave();
             return context.scene.enter('searchUser');

@@ -1,6 +1,6 @@
 const { seeTmpKeyboard, oneOrTwoKeyboard, menuKeyboard } = require("../../utils/buttons");
 const User = require("../../models/user");
-const { menuText } = require("../../utils/text");
+const { menuText, keyboardText } = require("../../utils/text");
 
 const step = async (context) => {
     try {
@@ -29,7 +29,7 @@ const step = async (context) => {
                 keyboard: menuKeyboard
             })
             return await context.scene.leave();
-        } else return context.send('Используй клавиатуру бота')
+        } else return context.send(keyboardText)
 
         return await context.scene.leave();
     } catch (error) {

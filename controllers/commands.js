@@ -29,7 +29,7 @@ const menuCommands = {
             }
         });
         await context.send({
-            message: `Вот твоя анкета: \n\n${user.name}, ${user.age}, ${user.city}\n${user.desc}`,
+            message: `Вот твоя анкета: \n\n${user.name}, ${user.age}, ${user.geo.city}\n${user.desc}`,
             attachment,
             keyboard: myTmpKeyboard
         });

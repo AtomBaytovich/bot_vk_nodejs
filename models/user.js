@@ -22,14 +22,25 @@ const schema = new Schema({
         required: true,
         enum: ['male', 'female']
     },
+    // кого хочет искать
     interestingGender: {
         type: String,
         required: true,
         enum: ['male', 'female', 'all']
     },
-    city: {
-        type: String,
-        required: true
+    geo: {
+        city: {
+            type: String,
+            required: true
+        },
+        coord: {
+            lat: {
+                type: String
+            },
+            lon: {
+                type: String
+            }
+        }
     },
     desc: {
         type: String,

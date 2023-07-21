@@ -6,6 +6,9 @@ let menuText = `
 4. ✈ Мой канал в Telegram.
 `
 
+let keyboardText = `Используй клавиатуру бота`
+
 module.exports = {
-    menuText
+    menuText,
+    keyboardText
 }

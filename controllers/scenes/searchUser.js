@@ -3,8 +3,9 @@ const { menuText } = require("../../utils/text");
 const userManagers = require("../userManagers");
 
 const step = async (context) => {
-    console.log('Вызов шага');
+
     if (context.scene.step.firstTime || !context.text) {
+
         const user = await userManagers.get({ id: context.peerId });
         if (!user) return;
         const {
@@ -12,11 +13,19 @@ const step = async (context) => {
             interestingGender,
             city
         } = user;
+
         const userFindRandom = await userManagers.getRandomUser({
             years: age,
             gender: interestingGender,
             city
         });
+
+        context.scene.state.userFind = {
+            age: userFindRandom.years,
+            gender: userFindRandom.gender,
+            geo: userFindRandom.geo
+        };
+
         return context.send(`${userFindRandom.name}, ${userFindRandom.age}, ${userFindRandom.city}`, {
             keyboard: menuSearchUserKeyboard
         });
@@ -30,6 +39,11 @@ const step = async (context) => {
     }
 
     if (context.messagePayload.command == 'unlike') {
+        // пропускаем и продолжаем подбор
+
+    }
+
+    if (context.messagePayload.command == 'message') {
         // пропускаем и продолжаем подбор
 
     }

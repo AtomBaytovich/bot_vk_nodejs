@@ -17,7 +17,9 @@ class UserController {
             age,
             gender,
             interestingGender,
-            city,
+            geo: {
+                city
+            },
             name,
             desc,
             photos
@@ -34,6 +36,7 @@ class UserController {
     }
 
     async getRandomUser({ years, city, gender }) {
+        /// поиск диапазона возраста, город без регистра и пол где "все равно" с пагинацией и фильтром на дату создания записи
         const user = await User.findOne({
 
         })
