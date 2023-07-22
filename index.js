@@ -6,6 +6,7 @@ const vk = require('./bot');
 
 (async function () {
     try {
+        mongoose.set('strictQuery', true);
         await mongoose.connect(process.env.BD_TOKEN, {
             useUnifiedTopology: true,
             useNewUrlParser: true,
