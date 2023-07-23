@@ -1,10 +1,10 @@
 const { _VK } = require("../../instance");
-const { menuSearchUserKeyboard, menuKeyboard } = require("../../utils/buttons");
+const { menuSearchUserKeyboard, menuKeyboard, backTmpKeyboard } = require("../../utils/buttons");
 const { menuText } = require("../../utils/text");
 const userManagers = require("../userManagers");
 const haversine = require('haversine-distance')
 
-const step = async (context) => {
+const stepMain = async (context) => {
 
     if (context.scene.step.firstTime || !context.text) {
 
@@ -46,8 +46,14 @@ const step = async (context) => {
 
         let kmText = ``;
         let kmFunc = haversine(
-            { latitude: userFindRandom.geo.coord.lat, longitude: userFindRandom.geo.coord.lon },
-            { latitude: geo.coord.lat, longitude: geo.coord.lon }
+            { 
+                latitude: userFindRandom.geo.coord.lat, 
+                longitude: userFindRandom.geo.coord.lon 
+            },
+            { 
+                latitude: geo.coord.lat, 
+                longitude: geo.coord.lon 
+            }
         )
 
         if (kmFunc > 0) {
@@ -67,7 +73,7 @@ const step = async (context) => {
         return context.send({
             message: `${userFindRandom.name}, ${userFindRandom.age}, ${userFindRandom.geo.city}${kmText}\n${userFindRandom.desc}`,
             attachment,
-            keyboard: menuSearchUserKeyboard
+            keyboard: menuSearchUserKeyboard(context.scene.state.userFind.id)
         });
     }
 
@@ -78,16 +84,15 @@ const step = async (context) => {
         await userManagers.likeUser({ whoLiked: context.peerId, whoLikedIt: context.scene.state.userFind.id })
     }
 
+    if (context.messagePayload.command == 'message') {
+        // отправляем сообщение и лайкаем
+        return await context.scene.step.next();
+    }
+
     if (context.messagePayload.command == 'unlike') {
         // пропускаем и продолжаем подбор
 
     }
-
-    if (context.messagePayload.command == 'message') {
-        // пропускаем и продолжаем подбор
-
-    }
-
 
     if (context.messagePayload.command == 'sleep') {
         await context.scene.leave();
@@ -100,12 +105,34 @@ ${menuText}
         })
     }
 
-
     await context.scene.leave();
     return context.scene.enter('searchUser');
 }
 
 
-const searchUserScene = [step];
+const stepMessage = async (context) => {
+    const text = context.text;
+    if (context.scene.step.firstTime || !context.text) return context.send({
+                message: `Напиши сообщение для этого пользователя`,
+                keyboard: backTmpKeyboard
+            });
+    
+    if (context.messagePayload?.command == 'back') return await context.scene.step.previous();
+    
+    if (text.length < 5) return context.send('Что так мало написал? Давай больше!');
+    if (text.length > 1000) return context.send(`Фига как много... Убери ${text.length - 1000} символов!`);
+
+    await userManagers.likeUser({ 
+        whoLiked: context.peerId, 
+        whoLikedIt: context.scene.state.userFind.id, 
+        message: text 
+    })
+
+    return await context.scene.step.previous();
+}
+
+
+
+const searchUserScene = [stepMain, stepMessage];
 
 module.exports = searchUserScene;

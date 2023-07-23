@@ -99,7 +99,7 @@ const menuKeyboard = Keyboard.builder()
     })
 
 
-const menuSearchUserKeyboard = Keyboard.builder()
+const menuSearchUserKeyboard = (id) => Keyboard.builder()
     .textButton({
         label: '❤',
         payload: {
@@ -110,7 +110,8 @@ const menuSearchUserKeyboard = Keyboard.builder()
     .textButton({
         label: '💌',
         payload: {
-            command: 'message'
+            command: 'message',
+            idVk: id
         },
         color: Keyboard.SECONDARY_COLOR
     })
@@ -180,6 +181,17 @@ const seeTmpKeyboard = Keyboard.builder()
     })
 
 
+const backTmpKeyboard = Keyboard.builder()
+    .textButton({
+        label: 'Вернуться назад',
+        payload: {
+            command: 'back'
+        },
+        color: Keyboard.SECONDARY_COLOR
+    })
+
+
+
 
 module.exports = {
     genderKeyboard,
@@ -194,5 +206,6 @@ module.exports = {
     backScoreKeyboard,
     myTmpKeyboard,
     oneOrTwoKeyboard,
-    seeTmpKeyboard
+    seeTmpKeyboard,
+    backTmpKeyboard
 }
