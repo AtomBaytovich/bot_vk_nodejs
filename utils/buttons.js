@@ -20,14 +20,14 @@ const interestingGenderKeyboard = Keyboard.builder()
     .textButton({
         label: 'Девушки',
         payload: {
-            type: 'male'
+            type: 'female'
         },
         color: Keyboard.POSITIVE_COLOR
     })
     .textButton({
         label: 'Парни',
         payload: {
-            type: 'female'
+            type: 'male'
         },
         color: Keyboard.POSITIVE_COLOR
     })
@@ -141,24 +141,37 @@ const backScoreKeyboard = Keyboard.builder()
 const myTmpKeyboard = Keyboard.builder()
     .textButton({
         label: '1',
+        payload: {
+            command: '1'
+        },
         color: Keyboard.NEGATIVE_COLOR
     })
     .textButton({
         label: '2',
+        payload: {
+            command: '2'
+        },
         color: Keyboard.SECONDARY_COLOR
     })
     .textButton({
         label: '3',
+        payload: {
+            command: '3'
+        },
         color: Keyboard.SECONDARY_COLOR
     })
     .textButton({
         label: '✈ 4',
+        payload: {
+            command: '4'
+        },
         color: Keyboard.SECONDARY_COLOR
     })
     .row()
     .textButton({
         label: 'Вернуться к оценкам',
         payload: {
+            command: '5'
         },
         color: Keyboard.POSITIVE_COLOR
     })
@@ -190,8 +203,30 @@ const backTmpKeyboard = Keyboard.builder()
         color: Keyboard.SECONDARY_COLOR
     })
 
+const backKeyboard = Keyboard.builder()
+    .textButton({
+        label: 'Вернуться назад',
+        payload: {
+            command: 'back'
+        },
+        color: Keyboard.SECONDARY_COLOR
+    })
 
-
+const myTmpPhoto = Keyboard.builder()
+    .textButton({
+        label: '1',
+        payload: {
+            command: 'my_photo'
+        },
+        color: Keyboard.SECONDARY_COLOR
+    })
+    .textButton({
+        label: '2',
+        payload: {
+            command: 'back'
+        },
+        color: Keyboard.SECONDARY_COLOR
+    })
 
 module.exports = {
     genderKeyboard,
@@ -207,5 +242,7 @@ module.exports = {
     myTmpKeyboard,
     oneOrTwoKeyboard,
     seeTmpKeyboard,
-    backTmpKeyboard
+    backTmpKeyboard,
+    backKeyboard,
+    myTmpPhoto
 }

@@ -46,14 +46,14 @@ class UserController {
             gender = {
                 $in: ['male', 'female']
             }
-        } 
+        }
 
         const listLikes = await Likes.find({
             whoLiked: myId
-        }).select('whoLikedIt').sort({date: -1}).lean()
+        }).select('whoLikedIt').sort({ date: -1 }).lean()
 
         let _list = listLikes
-        
+
         if (listLikes.length > 0) {
             _list = listLikes.map(el => {
                 return el.whoLikedIt
@@ -62,43 +62,45 @@ class UserController {
 
         const user = await User.findOne({
             "geo.city": { $regex: `${city}`, $options: 'i' },
-            "age": { $gte: age-2, $lte: age+2 },
+            "age": { $gte: age - 2, $lte: age + 2 },
             "gender": gender,
             "id": { "$nin": [myId, ..._list] }
-        }).sort({date: -1}).lean()
+        }).sort({ date: -1 }).lean()
 
         return user
-        
+
     }
 
-    async likeUser({ whoLiked, whoLikedIt, message = undefined }) {
+    async likeDislikeUser({ whoLiked, whoLikedIt, message = undefined, type = 'like' }) {
         let obj = {
+            type,
             whoLiked,
             whoLikedIt
         }
         if (message) {
             obj.message = message
         }
-        const likesList = new Likes({...obj})
+        const likesList = new Likes({ ...obj })
 
         await likesList.save(async (err) => {
             if (err) {
                 throw err
             }
-            let text = message ? message : ''
-            try {
-                await _API_VK.messages.send({
-                    user_id: whoLikedIt,
-                    message: `Вами заинтерисовался один человек. Посмотреть?
-                    ${text}`,
-                    random_id: getRandomId()
-                })
-            } catch (error) {
-                console.log(error)
+            if (type == 'like') {
+                let text = message ? message : ''
+                try {
+                    await _API_VK.messages.send({
+                        user_id: whoLikedIt,
+                        message: `Вами заинтерисовался один человек. Посмотреть?
+                        ${text}`,
+                        random_id: getRandomId()
+                    })
+                } catch (error) {
+                    console.log(error)
+                }
             }
-            
-        })
 
+        })
         return true;
     }
 

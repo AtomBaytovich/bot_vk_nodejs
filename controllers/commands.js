@@ -1,9 +1,6 @@
-const { _VK } = require("../instance");
 const User = require("../models/user");
-const { menuKeyboard, backScoreKeyboard, myTmpKeyboard, oneOrTwoKeyboard } = require("../utils/buttons");
-
-
-// доделать профиль и его редактирование
+const { menuKeyboard, backScoreKeyboard } = require("../utils/buttons");
+const { tgChannelText } = require("../utils/text");
 
 const menuCommands = {
     // смотреть анкеты
@@ -22,30 +19,13 @@ const menuCommands = {
     },
     // моя анкета
     myTmp: async function (context) {
-        const user = context.user;
-        const attachment = await _VK.upload.messagePhoto({
-            source: {
-                value: user.photos[0]
-            }
-        });
-        await context.send({
-            message: `Вот твоя анкета: \n\n${user.name}, ${user.age}, ${user.geo.city}\n${user.desc}`,
-            attachment,
-            keyboard: myTmpKeyboard
-        });
-        return context.send(`
-1. Заполнить анкету заново.
-2. Изменить фото.
-3. Изменить текст анкеты.
-4. ✈ Наш бот знакомств в Telegram.
-***
-5. Вернуться к оценкам.`)
+        return context.scene.enter('myTmp');
     },
     noSeeTmp: async function (context) {
-        return context.scene.enter('offSeeTmpScene');
+        return context.scene.enter('offSeeTmp');
     },
     seeTG: function (context) {
-        return context.send('Мой ТГ канал по разработке. Авторский интересный контент. \n\nhttps://t.me/atom_baytovich', {
+        return context.send(tgChannelText, {
             keyboard: backScoreKeyboard
         })
     }
@@ -56,7 +36,6 @@ const noFoundCommand = async (context) => {
         keyboard: menuKeyboard
     })
 }
-
 
 module.exports = {
     menuCommands,

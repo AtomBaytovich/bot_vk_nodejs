@@ -52,13 +52,12 @@ const stepFour = (context) => {
             keyboard: locationKeyboard
         });
     }
-    console.log(context.geo)
     if (!context.geo) return context.reply('Используй клавиатуру бота! Мне важно знать в каком ты городе живёшь!');
-    console.log(context.geo.place.city)
-    context.scene.state.geo = {};
-    context.scene.state.geo.city = context.geo.place.city;
-    context.scene.state.geo.latitude = context.geo.coordinates.latitude;
-    context.scene.state.geo.longitude = context.geo.coordinates.longitude;
+    context.scene.state.geo = {
+        city: context.geo.place.city,
+        latitude: context.geo.coordinates.latitude,
+        longitude: context.geo.coordinates.longitude
+    };
     return context.scene.step.next();
 }
 
@@ -97,15 +96,21 @@ const stepSeven = async (context) => {
                 keyboard: myPhotoKeyboard
             });
         }
+
         if (!context.messagePayload && context.attachments.length < 1) return context.reply('Пришли мне своё фото!')
         if (context.messagePayload) {
             const userVk = await _API_VK.users.get({
                 user_ids: context.senderId,
                 fields: ['photo_max_orig']
             })
-            context.scene.state.photos = [userVk[0].photo_max_orig];
+            const attachment = await _VK.upload.messagePhoto({
+                source: {
+                    value: userVk[0].photo_max_orig
+                }
+            });
+            context.scene.state.photos = [String(attachment)];
         } else {
-            context.scene.state.photos = [context.attachments[0].largeSizeUrl]
+            context.scene.state.photos = [String(context.attachments[0])]
         }
         return context.scene.step.next();
     } catch (error) {
@@ -128,15 +133,10 @@ const stepFinish = async (context) => {
                 photos
             } = context.scene.state;
             // переделать отправку сообщение о подтвреждении записи
-            const attachment = await _VK.upload.messagePhoto({
-                source: {
-                    value: photos[0]
-                }
-            });
 
             await context.send({
                 message: `Вот твоя анкета: \n\n${name}, ${age}, ${geo.city}\n${desc}`,
-                attachment
+                attachment: photos[0]
             });
             return context.send('Всё верно?', {
                 keyboard: confirmFormKeyboard

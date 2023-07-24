@@ -8,7 +8,10 @@ let menuText = `
 
 let keyboardText = `Используй клавиатуру бота`
 
+let tgChannelText = `Мой ТГ канал по разработке. Авторский интересный контент. \n\nhttps://t.me/atom_baytovich`
+
 module.exports = {
     menuText,
-    keyboardText
+    keyboardText,
+    tgChannelText
 }

@@ -26,8 +26,8 @@ const stepMain = async (context) => {
         /// защита на законченность 
         if (!userFindRandom) {
             await context.scene.leave();
-            return context.send(`Упс... Кажется все анкеты в твоём городе по твоим параметрам закончились! 
-            Подожди опка появятся новые или ты можешь изменить свои параметры на другие!
+            return context.send(`Упс... Кажется все анкеты в по твоим параметрам закончились! 
+            Подожди пока появятся новые или ты можешь изменить свои параметры на другие!
             
             ${menuText}`, {
                 keyboard: menuKeyboard
@@ -46,13 +46,13 @@ const stepMain = async (context) => {
 
         let kmText = ``;
         let kmFunc = haversine(
-            { 
-                latitude: userFindRandom.geo.coord.lat, 
-                longitude: userFindRandom.geo.coord.lon 
+            {
+                latitude: userFindRandom.geo.coord.lat,
+                longitude: userFindRandom.geo.coord.lon
             },
-            { 
-                latitude: geo.coord.lat, 
-                longitude: geo.coord.lon 
+            {
+                latitude: geo.coord.lat,
+                longitude: geo.coord.lon
             }
         )
 
@@ -60,19 +60,13 @@ const stepMain = async (context) => {
             if (kmFunc < 1000) {
                 kmText = `, 📍 ${String(kmFunc).split('.')[0]}м`
             } else {
-                kmText = `, 📍 ${Math.round(kmFunc / 1000)}`
+                kmText = `, 📍 ${Math.round(kmFunc / 1000)}км`
             }
         }
 
-        const attachment = await _VK.upload.messagePhoto({
-            source: {
-                value: userFindRandom.photos[0]
-            }
-        });
-
         return context.send({
             message: `${userFindRandom.name}, ${userFindRandom.age}, ${userFindRandom.geo.city}${kmText}\n${userFindRandom.desc}`,
-            attachment,
+            attachment: userFindRandom.photos[0],
             keyboard: menuSearchUserKeyboard(context.scene.state.userFind.id)
         });
     }
@@ -81,7 +75,7 @@ const stepMain = async (context) => {
 
     if (context.messagePayload.command == 'like') {
         // лайкаем , говорим тому юзеру и продолжаем  новый подбор
-        await userManagers.likeUser({ whoLiked: context.peerId, whoLikedIt: context.scene.state.userFind.id })
+        await userManagers.likeDislikeUser({ type: 'like', whoLiked: context.peerId, whoLikedIt: context.scene.state.userFind.id })
     }
 
     if (context.messagePayload.command == 'message') {
@@ -91,7 +85,7 @@ const stepMain = async (context) => {
 
     if (context.messagePayload.command == 'unlike') {
         // пропускаем и продолжаем подбор
-
+        await userManagers.likeDislikeUser({ type: 'dislike', whoLiked: context.peerId, whoLikedIt: context.scene.state.userFind.id })
     }
 
     if (context.messagePayload.command == 'sleep') {
@@ -113,19 +107,20 @@ ${menuText}
 const stepMessage = async (context) => {
     const text = context.text;
     if (context.scene.step.firstTime || !context.text) return context.send({
-                message: `Напиши сообщение для этого пользователя`,
-                keyboard: backTmpKeyboard
-            });
-    
+        message: `Напиши сообщение для этого пользователя`,
+        keyboard: backTmpKeyboard
+    });
+
     if (context.messagePayload?.command == 'back') return await context.scene.step.previous();
-    
+
     if (text.length < 5) return context.send('Что так мало написал? Давай больше!');
     if (text.length > 1000) return context.send(`Фига как много... Убери ${text.length - 1000} символов!`);
 
-    await userManagers.likeUser({ 
-        whoLiked: context.peerId, 
-        whoLikedIt: context.scene.state.userFind.id, 
-        message: text 
+    await userManagers.likeDislikeUser({
+        type: 'like',
+        whoLiked: context.peerId,
+        whoLikedIt: context.scene.state.userFind.id,
+        message: text
     })
 
     return await context.scene.step.previous();

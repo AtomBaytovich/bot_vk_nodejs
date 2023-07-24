@@ -1,6 +1,11 @@
 const { Schema, model } = require("mongoose");
 
 const schema = new Schema({
+    type: {
+        required: true,
+        type: String,
+        enum: ['like', 'dislike']
+    },
     // кто лайкнул
     whoLiked: {
         type: Number,
