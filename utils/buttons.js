@@ -228,6 +228,15 @@ const myTmpPhoto = Keyboard.builder()
         color: Keyboard.SECONDARY_COLOR
     })
 
+const tmpNewOneTimeKeyboard = ({ text }) => Keyboard.builder().oneTime()
+    .textButton({
+        label: text,
+        payload: {
+            command: 'keep'
+        },
+        color: Keyboard.SECONDARY_COLOR
+    })
+
 module.exports = {
     genderKeyboard,
     interestingGenderKeyboard,
@@ -244,5 +253,6 @@ module.exports = {
     seeTmpKeyboard,
     backTmpKeyboard,
     backKeyboard,
-    myTmpPhoto
+    myTmpPhoto,
+    tmpNewOneTimeKeyboard
 }

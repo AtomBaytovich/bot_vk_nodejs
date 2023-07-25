@@ -5,7 +5,6 @@ const { tgChannelText } = require("../utils/text");
 const menuCommands = {
     // смотреть анкеты
     seeTmp: async function (context) {
-        console.log(context)
         if (context.user?.isSearch == false) {
             await context.send('Я помню тебя! Рад видеть снова!')
             await User.updateOne({ 

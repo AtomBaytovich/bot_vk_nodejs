@@ -1,4 +1,4 @@
-const { _VK, _API_VK } = require("./instance");
+const { _VK } = require("./instance");
 const { HearManager } = require("@vk-io/hear");
 const { checkUserBd } = require("./middleware/checkUser");
 const { SessionManager } = require("@vk-io/session");
@@ -15,32 +15,26 @@ const { updates } = vk;
 const hearManager = new HearManager();
 const sessionManager = new SessionManager();
 
-
+// если сообщение исходящее и не из беседы, то не отвечаем
 updates.on('message', async (context, next) => {
-    // если сообщение исходящее и не из беседы, то не отвечаем
     if (context.isOutbox || context.isChat) return;
     return next();
 });
-
-updates.on(['message_new', 'message_event'], sessionManager.middleware);
-updates.on(['message_new', 'message_event'], sceneManager.middleware);
-updates.on(['message_new', 'message_event'], sceneManager.middlewareIntercept); // Default scene entry handler
-
 // проверяем есть ли запись юзера в бд
 updates.on('message_new', checkUserBd)
+
+updates.on(
+    ['message_new', 'message_event'],
+    [sessionManager.middleware, sceneManager.middleware, sceneManager.middlewareIntercept]
+);
+
+updates.on(['message_new', 'message_event'], async (context, next) => {
+    // если сообщение исходящее и не из беседы, то не отвечаем
+    console.log(context.scene)
+    return next();
+});
 // регистрируем менеджер прослушек текстовых сообщ(команд)
 updates.on('message_new', hearManager.middleware);
-
-
-updates.on('message_event', async (context, next) => {
-    console.log(context)
-    if (context.eventPayload) {
-        await context.scene.enter('searchUser');
-        
-    }
-    next()
-})
-
 
 hearManager.hear('Старт', async (context) => {
     context.reply('Я помню тебя!',)

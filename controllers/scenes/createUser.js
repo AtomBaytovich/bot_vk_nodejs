@@ -7,12 +7,16 @@ const {
     noTextKeyboard,
     noKeyboard,
     myPhotoKeyboard,
-    confirmFormKeyboard
+    confirmFormKeyboard,
+    tmpNewOneTimeKeyboard
 } = require("../../utils/buttons");
 const { keyboardText } = require("../../utils/text");
+const userManagers = require("../userManagers");
 
-const stepOne = (context) => {
+const stepOne = async (context) => {
     if (context.scene.step.firstTime || !context.text) {
+        const user = await userManagers.get({ id: context.peerId })
+        if (user) context.scene.state.user = user
         return context.send(`Сколько тебе лет?`, {
             keyboard: noKeyboard
         })
@@ -75,12 +79,20 @@ const stepFive = (context) => {
 
 const stepSix = (context) => {
     if (context.scene.step.firstTime || !context.text) {
+        if (context.scene.state.user) {
+            return context.send('Расскажи о себе и кого хочешь найти, чем предлагаешь заняться. Это поможет лучше подобрать тебе компанию.', {
+                keyboard: tmpNewOneTimeKeyboard({ text: 'Оставить прошлый' })
+            });
+        }
         return context.send('Расскажи о себе и кого хочешь найти, чем предлагаешь заняться. Это поможет лучше подобрать тебе компанию.', {
             keyboard: noTextKeyboard
         });
     }
-    if (context.messagePayload) {
+    if (context.messagePayload?.command == 'no_text') {
         context.scene.state.desc = '';
+        return context.scene.step.next();
+    } else if (context.messagePayload?.command == 'keep') {
+        context.scene.state.desc = context.scene.state.user.desc;
         return context.scene.step.next();
     }
     const text = context.text;
@@ -123,7 +135,6 @@ const stepSeven = async (context) => {
 const stepFinish = async (context) => {
     try {
         if (context.scene.step.firstTime || !context.text) {
-            console.log(context.scene.state)
 
             const {
                 age,
@@ -152,10 +163,8 @@ const stepFinish = async (context) => {
 
 const stepEnd = async (context) => {
     try {
-        if (!context.messagePayload) {
-            return context.reply('Используй клавиатуру!')
-        }
-
+        if (!context.messagePayload) return context.reply('Используй клавиатуру!')
+        
         if (context.messagePayload.command == 'yes') {
             const {
                 age,
@@ -166,6 +175,28 @@ const stepEnd = async (context) => {
                 desc,
                 photos
             } = context.scene.state;
+
+            if (context.scene.state.user) {
+                await User.updateOne({ id: context.scene.state.user.id }, {
+                    age,
+                    gender,
+                    interestingGender,
+                    geo: {
+                        city: geo.city,
+                        coord: {
+                            lat: geo.latitude,
+                            lon: geo.longitude
+                        }
+                    },
+                    name,
+                    desc,
+                    photos
+                })
+
+                await context.send('Успешно поменяли свой профиль!')
+                await context.scene.leave();
+                return context.scene.enter('myTmp');
+            }
 
             const newUser = new User({
                 id: context.peerId,
@@ -184,9 +215,7 @@ const stepEnd = async (context) => {
                 photos
             })
 
-            await newUser.save(err => {
-                if (err) console.log(err)
-            });
+            await newUser.save();
 
             await context.send('Добро пожаловать!')
             await context.scene.leave();

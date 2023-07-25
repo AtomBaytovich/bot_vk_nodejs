@@ -29,6 +29,8 @@ const stepMain = async (context) => {
 
         if (context.messagePayload.command == '1') {
             // Заполнить анкету заново
+            await context.scene.leave();
+            return context.scene.enter('signup');
         }
 
         if (context.messagePayload.command == '2') {
@@ -38,7 +40,6 @@ const stepMain = async (context) => {
 
         if (context.messagePayload.command == '3') {
             // Изменить текст анкеты
-            console.log('33333')
             return await context.scene.step.go(2)
         }
 
