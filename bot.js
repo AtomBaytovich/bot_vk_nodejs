@@ -28,22 +28,15 @@ updates.on(
     [sessionManager.middleware, sceneManager.middleware, sceneManager.middlewareIntercept]
 );
 
-updates.on(['message_new', 'message_event'], async (context, next) => {
-    // если сообщение исходящее и не из беседы, то не отвечаем
-    console.log(context.scene)
-    return next();
-});
 // регистрируем менеджер прослушек текстовых сообщ(команд)
 updates.on('message_new', hearManager.middleware);
 
-hearManager.hear('Старт', async (context) => {
-    context.reply('Я помню тебя!',)
-});
-
+hearManager.hear([/Старт/i, /Начать/i, /Меню/i], menuCommands.menu);
 hearManager.hear(['1', 'Вернуться к оценкам', 'Посмотреть анкеты', 'Смотреть анкеты'], menuCommands.seeTmp)
 hearManager.hear('2', menuCommands.myTmp)
 hearManager.hear('3', menuCommands.noSeeTmp)
 hearManager.hear(['✈ 4', '4'], menuCommands.seeTG)
+hearManager.hear('5', menuCommands.seeLikesUser)
 
 // команда не найдена
 hearManager.onFallback(noFoundCommand);

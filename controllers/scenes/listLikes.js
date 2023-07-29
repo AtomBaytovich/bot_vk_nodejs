@@ -1,6 +1,6 @@
 // сцена для принятия и отклонения заявок 
 
-const { menuSearchUserKeyboard, menuKeyboard, backTmpKeyboard } = require("../../utils/buttons");
+const { menuSearchUserKeyboard, menuKeyboard, backTmpKeyboard, listUserLikesKeyboard } = require("../../utils/buttons");
 const { menuText, distanceText } = require("../../utils/text");
 const userManagers = require("../userManagers");
 
@@ -11,7 +11,7 @@ const stepMain = async (context) => {
         const user = context.user;
         if (!user) return;
         const userFindRandom = await userManagers.getListLikes({ id: user.id });
-        
+        console.log(userFindRandom)
         /// защита на законченность 
         if (!userFindRandom) {
             await context.scene.leave();
@@ -35,14 +35,14 @@ const stepMain = async (context) => {
         const kmText = distanceText({
             lat1: userFindRandom.geo.coord.lat,
             lon1: userFindRandom.geo.coord.lon,
-            lat2: geo.coord.lat,
-            lon2: geo.coord.lon
+            lat2: user.geo.coord.lat,
+            lon2: user.geo.coord.lon
         })
 
         return context.send({
             message: `${userFindRandom.name}, ${userFindRandom.age}, ${userFindRandom.geo.city}${kmText}\n${userFindRandom.desc}`,
             attachment: userFindRandom.photos[0],
-            keyboard: menuSearchUserKeyboard(context.scene.state.userFind.id)
+            keyboard: listUserLikesKeyboard
         });
     }
 

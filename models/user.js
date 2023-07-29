@@ -55,6 +55,11 @@ const schema = new Schema({
         id: {
             type: Number,
             required: true
+        },
+        type: {
+            type: String,
+            required: true,
+            enum: ['like', 'dislike']
         }
     }]
 })

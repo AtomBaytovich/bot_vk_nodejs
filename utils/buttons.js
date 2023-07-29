@@ -130,6 +130,29 @@ const menuSearchUserKeyboard = (id) => Keyboard.builder()
         color: Keyboard.SECONDARY_COLOR
     })
 
+const listUserLikesKeyboard = Keyboard.builder()
+    .textButton({
+        label: '❤',
+        payload: {
+            command: 'like'
+        },
+        color: Keyboard.POSITIVE_COLOR
+    })
+    .textButton({
+        label: '👎',
+        payload: {
+            command: 'unlike'
+        },
+        color: Keyboard.SECONDARY_COLOR
+    })
+    .textButton({
+        label: '💤',
+        payload: {
+            command: 'sleep'
+        },
+        color: Keyboard.SECONDARY_COLOR
+    })
+
 const backScoreKeyboard = Keyboard.builder()
     .textButton({
         label: 'Вернуться к оценкам',
@@ -254,5 +277,6 @@ module.exports = {
     backTmpKeyboard,
     backKeyboard,
     myTmpPhoto,
-    tmpNewOneTimeKeyboard
+    tmpNewOneTimeKeyboard,
+    listUserLikesKeyboard
 }
